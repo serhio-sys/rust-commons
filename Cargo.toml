@@ -1,0 +1,12 @@
+[package]
+name = "rust-commons"
+description = "Rust commons"
+version = "0.1.0"
+edition = "2021"
+authors = ["Serhii Kolodiazhnyi <serhii.kolodyazhniy@gmail.com>"]
+publish = ["local"]
+
+readme = "README.md"
+license = "Apache-2.0"
+
+[dependencies]
