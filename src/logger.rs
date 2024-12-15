@@ -26,3 +26,15 @@ pub fn init_logger() {
         .map(|()| log::set_max_level(log::LevelFilter::Info))
         .unwrap();
 }
+
+pub fn init_warn_logger() {
+    log::set_logger(&LOGGER)
+        .map(|()| log::set_max_level(log::LevelFilter::Warn))
+        .unwrap();
+}
+
+pub fn init_error_logger() {
+    log::set_logger(&LOGGER)
+        .map(|()| log::set_max_level(log::LevelFilter::Warn))
+        .unwrap();
+}
