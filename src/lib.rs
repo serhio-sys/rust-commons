@@ -10,3 +10,5 @@ pub use diesel_migrations;
 pub use lazy_static;
 pub use chrono;
 pub use uuid;
+pub use rand;
+pub use thiserror;
