@@ -1250,7 +1250,6 @@ dependencies = [
  "log",
  "pwhash",
  "rand",
- "serde",
  "serde_json",
  "serde_qs",
  "serde_urlencoded",
