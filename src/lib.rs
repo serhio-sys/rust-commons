@@ -12,3 +12,4 @@ pub use rand;
 pub extern crate pwhash;
 pub extern crate base64;
 pub extern crate diesel;
+pub extern crate chrono;
