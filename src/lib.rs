@@ -12,6 +12,8 @@ pub use chrono;
 pub use uuid;
 pub use rand;
 pub use thiserror;
+pub use base64;
+pub use pwhash;
 
 pub use serde;
 pub use serde_json;
