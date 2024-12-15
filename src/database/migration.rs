@@ -1,4 +1,4 @@
-use std::{ path::Path, sync::Arc };
+use std::path::Path;
 use log;
 
 use chrono::NaiveDateTime;
@@ -14,8 +14,8 @@ use crate::config::database_config::DatabaseConfig;
 
 const DATE_FORMAT: &str = "%Y-%m-%d-%H%M%S";
 
-pub fn migrate(
-    db_conf: Arc<impl DatabaseConfig>
+pub fn migrate<T: DatabaseConfig>(
+    db_conf: &T
 ) -> Result<(), Box<dyn std::error::Error + Send + Sync + 'static>> {
     let manager = ConnectionManager::<PgConnection>::new(
         &format!(
