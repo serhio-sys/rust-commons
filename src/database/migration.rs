@@ -14,9 +14,9 @@ use crate::config::database_config::DatabaseConfig;
 
 const DATE_FORMAT: &str = "%Y-%m-%d-%H%M%S";
 
-pub fn migrate<T: DatabaseConfig>(
-    db_conf: &T
-) -> Result<(), Box<dyn std::error::Error + Send + Sync + 'static>> {
+pub fn migrate<T>(db_conf: &T) -> Result<(), Box<dyn std::error::Error + Send + Sync + 'static>>
+    where T: DatabaseConfig
+{
     let manager = ConnectionManager::<PgConnection>::new(
         &format!(
             "postgres://{}:{}@{}/{}?sslmode=disable",
