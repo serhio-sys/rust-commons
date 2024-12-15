@@ -4,7 +4,7 @@ pub mod database;
 pub mod crypto;
 
 pub use diesel_migrations;
-extern crate diesel;
+pub extern crate diesel;
 
 pub use log;
 pub use dotenvy;
@@ -13,8 +13,8 @@ pub use chrono;
 pub use uuid;
 pub use rand;
 pub use thiserror;
-extern crate base64;
-extern crate pwhash;
+pub extern crate base64;
+pub extern crate pwhash;
 
 pub use serde;
 pub use serde_json;
