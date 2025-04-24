@@ -2,6 +2,7 @@ pub mod logger;
 pub mod config;
 pub mod database;
 pub mod crypto;
+pub mod i18n;
 
 pub use log;
 pub use dotenvy;

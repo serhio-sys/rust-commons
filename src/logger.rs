@@ -22,19 +22,13 @@ impl log::Log for Logger {
 }
 
 pub fn init_logger() {
-    log::set_logger(&LOGGER)
-        .map(|()| log::set_max_level(log::LevelFilter::Info))
-        .unwrap();
+    let _ = log::set_logger(&LOGGER).map(|()| log::set_max_level(log::LevelFilter::Info));
 }
 
 pub fn init_warn_logger() {
-    log::set_logger(&LOGGER)
-        .map(|()| log::set_max_level(log::LevelFilter::Warn))
-        .unwrap();
+    let _ = log::set_logger(&LOGGER).map(|()| log::set_max_level(log::LevelFilter::Warn));
 }
 
 pub fn init_error_logger() {
-    log::set_logger(&LOGGER)
-        .map(|()| log::set_max_level(log::LevelFilter::Warn))
-        .unwrap();
+    let _ = log::set_logger(&LOGGER).map(|()| log::set_max_level(log::LevelFilter::Error));
 }
