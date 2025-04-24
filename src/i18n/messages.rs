@@ -45,6 +45,10 @@ lazy_static! {
     };
 }
 
+pub trait EnumMessages: Eq + Hash + std::fmt::Display + IntoEnumIterator {
+    fn get_bundle_name() -> String;
+}
+
 pub struct Messages {
     pub bundle_path: String,
     pub messages: HashMap<String, String>,
@@ -59,25 +63,23 @@ impl Messages {
             log::warn!("Message was not found by key - {}", key);
             return Some(key.to_string());
         }
-        return message.cloned();
+        message.cloned()
     }
 
-    pub fn get_message_by_enum<E>(&self, key: E) -> Option<String>
-        where E: Eq + Hash + std::str::FromStr + std::fmt::Display + IntoEnumIterator
-    {
+    pub fn get_message_by_enum<E>(&self, key: E) -> Option<String> where E: EnumMessages {
         let key_string = key.to_string();
         let message: Option<&String> = self.messages.get(&key_string);
         if message.is_none() {
             log::warn!("Message was not found by key - {}", &key_string);
             return Some(key_string);
         }
-        return message.cloned();
+        message.cloned()
     }
 
     pub fn change_locale(&mut self, lang: Language) {
-        let mut path = PathBuf::from(env::current_dir().unwrap());
+        let mut path = env::current_dir().unwrap();
         path = path.join(LOCALE_PATH.as_str());
-        path = path.join(format!("{}_{}.json", self.bundle_path, lang.to_string()));
+        path = path.join(format!("{}_{}.json", self.bundle_path, lang));
         match Messages::simple_read_messages(&path) {
             Ok(refetched_messages) => {
                 self.messages = refetched_messages;
@@ -92,12 +94,10 @@ impl Messages {
         self.lang = lang;
     }
 
-    pub fn change_locale_and_validate<E>(&mut self, lang: Language)
-        where E: Eq + Hash + std::str::FromStr + std::fmt::Display + IntoEnumIterator
-    {
-        let mut path = PathBuf::from(env::current_dir().unwrap());
+    pub fn change_locale_and_validate<E>(&mut self, lang: Language) where E: EnumMessages {
+        let mut path = env::current_dir().unwrap();
         path = path.join(LOCALE_PATH.as_str());
-        path = path.join(format!("{}_{}.json", self.bundle_path, lang.to_string()));
+        path = path.join(format!("{}_{}.json", self.bundle_path, lang));
         match Messages::read_messages::<E>(&path) {
             Ok(refetched_messages) => {
                 self.messages = refetched_messages;
@@ -112,13 +112,12 @@ impl Messages {
         self.lang = lang;
     }
 
-    pub fn new<E>(bundle_path: &str, lang: Language) -> Self
-        where E: Eq + Hash + std::str::FromStr + std::fmt::Display + IntoEnumIterator
-    {
+    pub fn new<E>(lang: Language) -> Self where E: EnumMessages {
+        let bundle_path: String = E::get_bundle_name();
         let mut bundle_messages: HashMap<String, String> = HashMap::new();
-        let mut path = PathBuf::from(env::current_dir().unwrap());
+        let mut path = env::current_dir().unwrap();
         path = path.join(LOCALE_PATH.as_str());
-        path = path.join(format!("{}_{}.json", bundle_path, lang.to_string()));
+        path = path.join(format!("{}_{}.json", bundle_path, lang));
         match Messages::read_messages::<E>(&path) {
             Ok(messages) => {
                 bundle_messages = messages;
@@ -130,18 +129,18 @@ impl Messages {
                     e
                 ),
         }
-        return Messages {
+        Messages {
             bundle_path: bundle_path.to_owned(),
             messages: bundle_messages,
-            lang: lang,
+            lang,
             duration: Local::now() + Duration::from_secs(*REMOVE_INTERVAL),
-        };
+        }
     }
 
     fn read_messages<E>(
         path: &PathBuf
     ) -> Result<HashMap<String, String>, Box<dyn std::error::Error>>
-        where E: Eq + Hash + std::str::FromStr + std::fmt::Display + IntoEnumIterator
+        where E: EnumMessages
     {
         let map: HashMap<String, String> = Messages::simple_read_messages(path)?;
         for key in E::iter() {
@@ -152,7 +151,7 @@ impl Messages {
                 continue;
             }
         }
-        return Ok(map);
+        Ok(map)
     }
 
     fn simple_read_messages(
@@ -160,6 +159,6 @@ impl Messages {
     ) -> Result<HashMap<String, String>, Box<dyn std::error::Error>> {
         let file_content = fs::read_to_string(path)?;
         let map: HashMap<String, String> = serde_json::from_str(&file_content)?;
-        return Ok(map);
+        Ok(map)
     }
 }

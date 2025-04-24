@@ -18,7 +18,7 @@ pub fn migrate<T>(db_conf: &T) -> Result<(), Box<dyn std::error::Error + Send + 
     where T: DatabaseConfig
 {
     let manager = ConnectionManager::<PgConnection>::new(
-        &format!(
+        format!(
             "postgres://{}:{}@{}/{}?sslmode=disable",
             db_conf.get_db_user(),
             db_conf.get_db_password(),
@@ -54,7 +54,7 @@ pub fn migrate<T>(db_conf: &T) -> Result<(), Box<dyn std::error::Error + Send + 
         }
     }
     log::info!("Migrations was passed");
-    return Ok(());
+    Ok(())
 }
 
 fn migrate_to_version(
@@ -88,17 +88,15 @@ fn migrate_to_version(
                     } else {
                         log::info!("Executed migration: {}", name);
                     }
+                } else if
+                    let Err(e) = MigrationHarness::revert_migration(
+                        &mut connection.get().unwrap(),
+                        &migration
+                    )
+                {
+                    log::error!("Revert migration error: {}", e.to_string());
                 } else {
-                    if
-                        let Err(e) = MigrationHarness::revert_migration(
-                            &mut connection.get().unwrap(),
-                            &migration
-                        )
-                    {
-                        log::error!("Revert migration error: {}", e.to_string());
-                    } else {
-                        log::info!("Reverted migration: {}", name);
-                    }
+                    log::info!("Reverted migration: {}", name);
                 }
             }
             Err(e) => {
