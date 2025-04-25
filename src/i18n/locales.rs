@@ -1,7 +1,7 @@
 use serde::{ Deserialize, Serialize };
-use strum_macros::{ EnumString, Display };
+use strum_macros::{ Display, EnumIter, EnumString };
 
-#[derive(EnumString, Display, Serialize, Deserialize, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(EnumString, Display, Serialize, Deserialize, Clone, Copy, PartialEq, Eq, Hash, EnumIter)]
 pub enum Language {
     #[strum(serialize = "en")] English,
     #[strum(serialize = "es")] Spanish,
