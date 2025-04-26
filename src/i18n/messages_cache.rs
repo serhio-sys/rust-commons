@@ -24,7 +24,7 @@ pub fn get_messages<E>(lang: Language) -> Option<Arc<RwLock<Messages>>> where E:
     tokio::spawn(remove_expired_messages());
     let bundle_name = E::get_bundle_name();
     let mut cache = MESSAGES_CACHE.write().unwrap();
-    if let Some(existing) = cache.get(&bundle_name) {
+    if let Some(existing) = cache.get(format!("{}_{}", bundle_name.to_string(), lang).as_str()) {
         let mut writtable = existing.write().unwrap();
         if !writtable.lang.eq(&lang) {
             writtable.change_locale_and_validate::<E>(lang);
@@ -34,7 +34,7 @@ pub fn get_messages<E>(lang: Language) -> Option<Arc<RwLock<Messages>>> where E:
     Some(
         Arc::clone(
             cache
-                .entry(bundle_name.to_string())
+                .entry(format!("{}_{}", bundle_name.to_string(), lang))
                 .or_insert_with(|| { Arc::new(RwLock::new(Messages::new::<E>(lang))) })
         )
     )
